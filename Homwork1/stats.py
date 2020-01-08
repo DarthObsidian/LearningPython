@@ -19,3 +19,5 @@ else:
 print('Numbers:', numbers)
 print('sum =', total, ', min =', numbers[0], ', max =', numbers[length-1],
       ', average =', "{:.1f}".format(total/length), ', median =', median)
+      
+input('Pres any key to exit...')

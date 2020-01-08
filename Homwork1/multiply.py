@@ -47,3 +47,5 @@ else:
         for num in item:
             print('{:>4}'.format(str(num)), end= '')
         print('')
+
+input('Press any key to exit...')
