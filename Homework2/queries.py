@@ -15,3 +15,6 @@ sameCitySupps = {(s[1], d[1]) for s in parts.suppliers
                               for d in parts.suppliers
                               if d[3] == s[3] and d[1] != s[1]}
 print(sameCitySupps)
+
+suppByCity = {s[3] : {s[1]} for s in parts.suppliers}
+print(suppByCity)
