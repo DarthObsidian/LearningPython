@@ -23,6 +23,6 @@ words = { word : splitWords.count(word) for word in splitWords if word != ''}
 words = {key : value for key, value in sorted(words.items(), key=lambda word: word[1], reverse=True)}
 
 for key, value in words.items():
-    name = str(key) + ":"
-    #right justify using length of longest word + 1 to account for the added :
-    print(name.rjust(num + 1), '{:>5}'.format(str(value)))
+    name = str(key)
+    #right justify using length of longest word 
+    print(name.rjust(num) + ':', '{:>5}'.format(str(value)))
