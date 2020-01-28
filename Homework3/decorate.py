@@ -6,13 +6,12 @@ def track(f):
         if key in results:
             print(key, 'found in cache')
             return results[key]
-        else:
-            wrapper.count += 1
-            val = f(*args, **kwargs)
-            results[key] = val
-            return val
+        wrapper.count += 1
+        val = f(*args, **kwargs)
+        results[key] = val
+        return val
     wrapper.count = 0
-    results = {}
+    results = dict()
     return wrapper
 
 def log(f):
