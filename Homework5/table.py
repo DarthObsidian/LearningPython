@@ -26,10 +26,8 @@ class Table:
 
     # Relational operations:
     def select(self, field, val):
-        if field in self.fields:
-            newTup = {item for item in self.tups if val in item}
-            return Table('result', self.fields, newTup)
-        pass
+        newTup = {item for item in self.tups if val in item}
+        return Table('result', self.fields, newTup)
 
     def project(self, *fields):
         i = 0
@@ -45,27 +43,44 @@ class Table:
 
     @staticmethod
     def join(tab1, tab2):
-        pass
+        i = 0
+        while i < len(tab1.fields):
+            if tab1.fields[i] in tab2.fields:
+                commonInd1 = i
+                break
+            i += 1
+
+        newField = tab1.fields + tuple([item for item in tab2.fields if item not in tab1.fields])
+        
+        newTups = set()
+        for tupe in tab1.tups:
+            for tupe2 in tab2.tups:
+                if tupe[commonInd1] in tupe2:
+                    newTups.add(tupe + tuple([thing for thing in tupe2 if thing not in tupe]))
+
+        return Table('result', newField, newTups)
     
     def insert(self, *tup):
-        pass
+        if len(tup) == len(self.fields):
+            self.tups.add(tup)
     
     def remove(self, field, val):
-        pass
+        itemsToRemove = {item for item in self.tups if val in item}
+
+        for tupe in itemsToRemove:
+            self.tups.remove(tupe)
 
     # Serialization and text backup
     def store(self):
-        file = open(f'{self.name}.db', 'wb')
-        pickle.dump(self, file)
-        file.close()
+        with open(f'{self.name}.db', 'wb') as file:
+            pickle.dump(self, file)
 
     @staticmethod
     def restore(fname):
         with open(f'{fname}', 'rb') as file:
-            table = pickle.load(file)
+            return pickle.load(file)
         
-        pass
-
+        
     @staticmethod
     def read(fname):
         file = open(fname, 'r')
