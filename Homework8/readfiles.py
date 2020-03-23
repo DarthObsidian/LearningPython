@@ -9,17 +9,21 @@ def createDb(dir, db):
     curs = conn.cursor()
     command = f'''CREATE TABLE {tableName}
     (ext VARCHAR(5), 
-    path VARCHAR(50),
-    fname VARCHAR(20))'''
+    path VARCHAR(100),
+    fname VARCHAR(50))'''
 
     curs.execute(command)
     conn.commit
 
-    for root, dirs, files in os.walk(dir):
+    for root, dirs, files in os.walk(os.path.normpath(dir)):
         for file in files:
             if file[:1] != '.':
-                command = f'INSERT INTO {tableName} VALUES({os.path.splitext(files)[1].replace(".", "")}, {root}, {file})'
-                curs.execute(command)
+                ext = os.path.splitext(file)[1].replace(".", "")
+                if ext == "":
+                    ext = None
+
+                command = f'INSERT INTO {tableName} (ext, path, fname) VALUES(?, ?, ?)'
+                curs.execute(command, (ext, root.replace('\\', '/'), file))
                 conn.commit
     
     curs.execute('SELECT * FROM files')
