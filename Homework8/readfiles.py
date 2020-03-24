@@ -13,7 +13,6 @@ def createDb(dir, db):
     fname VARCHAR(50))'''
 
     curs.execute(command)
-    conn.commit
 
     for root, dirs, files in os.walk(os.path.normpath(dir)):
         for file in files:
@@ -24,11 +23,12 @@ def createDb(dir, db):
 
                 command = f'INSERT INTO {tableName} (ext, path, fname) VALUES(?, ?, ?)'
                 curs.execute(command, (ext, root.replace('\\', '/'), file))
-                conn.commit
     
-    curs.execute('SELECT * FROM files')
-    print(curs.fetchall())
+    #curs.execute(f'SELECT * FROM {tableName}')
+    #print(curs.fetchall())
     
+    conn.commit()
+    curs.close
     conn.close
 
 def main():
