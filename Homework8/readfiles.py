@@ -23,10 +23,7 @@ def createDb(dir, db):
 
                 command = f'INSERT INTO {tableName} (ext, path, fname) VALUES(?, ?, ?)'
                 curs.execute(command, (ext, root.replace('\\', '/'), file))
-    
-    #curs.execute(f'SELECT * FROM {tableName}')
-    #print(curs.fetchall())
-    
+                
     conn.commit()
     curs.close()
     conn.close()

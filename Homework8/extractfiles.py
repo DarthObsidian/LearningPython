@@ -1,18 +1,15 @@
 import sys
-import os
 import re
-import sqlite3
 from zipfile import ZipFile
 
 def extract(file, exp):
-        with ZipFile(file, 'r') as zip:
-            zipMember = list()
-            for item in zip.namelist():
-                if re.match(exp, item):
-                    zipMember.append(item)
-            for member in zipMember:
-                print(member)
-                zip.extract(path='NewFolder', member=member)
+    with ZipFile(file, 'r') as zip:
+        zipMember = list()
+        for item in zip.namelist():
+            if re.search(exp, item):
+                zipMember.append(item)
+        for member in zipMember:
+            zip.extract(path='ExtractedFiles', member=member)
 
 def main():
     if len(sys.argv) == 1:
