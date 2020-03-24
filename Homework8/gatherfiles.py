@@ -18,8 +18,8 @@ def gather(args):
                 zip.write(os.path.join(file[1], file[2]))
 
 
-    curs.close
-    conn.close
+    curs.close()
+    conn.close()
 
 def main():
     if len(sys.argv) == 1:

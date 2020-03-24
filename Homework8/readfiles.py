@@ -28,8 +28,8 @@ def createDb(dir, db):
     #print(curs.fetchall())
     
     conn.commit()
-    curs.close
-    conn.close
+    curs.close()
+    conn.close()
 
 def main():
     if len(sys.argv) == 1:
