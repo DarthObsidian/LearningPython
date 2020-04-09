@@ -1,5 +1,6 @@
 import urllib.request as ur
 import re
+from collections import defaultdict
 
 def get_all_links(url):
     with ur.urlopen(url) as conn:
@@ -13,11 +14,12 @@ def crawl(seed, max_level):
         for line in conn:
             data += line.decode()
         words = re.findall(r'\w+(?![^<]*>)', data)
-        index = { word.lower() : seed for word in words }
-        print(words)
-    # if max_level <= 0:
-    #     return index
-    # return crawl(seed, max_level - 1)
+        index = { word.lower() : {seed} for word in words }
+        graph = { seed : { url for url in get_all_links(seed) } }
+
+        if max_level <= 0:
+            return index, graph
+
 
 def compute_ranks(graph):
     d = 0.85     # probability that surfer will bail
@@ -40,7 +42,11 @@ def compute_ranks(graph):
     return ranks
 
 def main():
-    crawl('http://freshsources.com/page1.html', 0)
+    # print(get_all_links('http://freshsources.com/page1.html'))
+
+    index, graph = crawl('http://freshsources.com/page1.html', 1)
+    print("INDEX:", index)
+    print('GRAPH', graph)
 
 if __name__ == "__main__":
     main()
