@@ -7,7 +7,7 @@ class NeedleStack():
         self.index = defaultdict(set)
         self.graph = defaultdict(set)
         self.crawl(url, max_level)
-        self.ranks = 0
+        self.ranks = self.compute_ranks
 
     def get_all_links(self, url):
         with ur.urlopen(url) as conn:
@@ -23,13 +23,17 @@ class NeedleStack():
             for line in conn:
                 data += line.decode()
             words = re.findall(r'\w+(?![^<]*>)', data)
-            index = { word.lower() : { seed } for word in words }
-            graph = { seed : { url for url in urls } }
+
+            for word in words:
+                self.index[word.lower()].add(seed)
+            for url in urls:
+                self.graph[seed].add(url)
 
             if max_level <= 0:
-                return index, graph
+                return
             for url in urls:
                 self.crawl(url, max_level - 1)
+            return
 
     def compute_ranks(self, graph):
         d = 0.85     # probability that surfer will bail
@@ -51,9 +55,20 @@ class NeedleStack():
             ranks = newranks
         return ranks
 
+    def lookup(self, keyword):
+        pass
+
 def main():
-    # print(get_all_links('http://freshsources.com/page1.html'))
-    test = NeedleStack('http://freshsources.com/page1.html')
+    engine = NeedleStack('http://freshsources.com/page1.html', 5)
+    for w in ['pages','links','you','have','I']:
+        print(w,'\n',engine.lookup(w))
+    print()
+    print('index:')
+    print(engine.index)
+    print()
+    print('graph:',engine.graph)
+    print()
+    print('ranks:',engine.ranks)
 
 if __name__ == "__main__":
     main()
