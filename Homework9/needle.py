@@ -7,7 +7,7 @@ class NeedleStack():
         self.index = defaultdict(set)
         self.graph = defaultdict(set)
         self.crawl(url, max_level)
-        self.ranks = self.compute_ranks
+        self.ranks = self.compute_ranks(self.graph)
 
     def get_all_links(self, url):
         with ur.urlopen(url) as conn:
@@ -32,7 +32,8 @@ class NeedleStack():
             if max_level <= 0:
                 return
             for url in urls:
-                self.crawl(url, max_level - 1)
+                if url not in self.graph:
+                    self.crawl(url, max_level - 1)
             return
 
     def compute_ranks(self, graph):
@@ -56,7 +57,19 @@ class NeedleStack():
         return ranks
 
     def lookup(self, keyword):
-        pass
+        if keyword.lower() in self.index:
+            unorderedList = list(self.index[keyword.lower()])
+            uDict = dict()
+            for item in unorderedList:
+                uDict[item] = self.ranks[item]
+            vals = sorted(uDict.values(), reverse=True)
+            ordered = list()
+            for val in vals:
+                for k, v in uDict.items():
+                    if val == v:
+                        ordered.append(k)
+            return ordered
+        return 'Keyword not found in database'
 
 def main():
     engine = NeedleStack('http://freshsources.com/page1.html', 5)
