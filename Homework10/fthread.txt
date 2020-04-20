@@ -1,0 +1,3 @@
+65536 bytes downloaded
+It took 53.06591606140137 seconds
+It took the CPU 36.71875 seconds
