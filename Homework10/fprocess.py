@@ -2,13 +2,13 @@ import urllib.request as ur
 import flags
 import os
 import time
-import multiprocessing as mp
+import concurrent.futures
 
-def getGifs():
+def getGifs(flags):
     if not os.path.exists('flags'):
         os.makedirs('flags')
     url = 'https://www.cia.gov/library/publications/resources/the-world-factbook/graphics/flags/large/'
-    for item in flags.flags:
+    for item in flags:
         name = item + '-lgflag.gif'
         ur.urlretrieve(url + name, 'flags/' + name)
     ur.urlcleanup()
@@ -18,14 +18,8 @@ def main():
     start = time.time()
     cpu = time.process_time()
 
-    procs = []
-    for n in range(4):
-        proc = mp.Process(target=getGifs)
-        procs.append(proc)
-        proc.start()
-
-    for proc in procs:
-        proc.join()
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        executor.submit(getGifs, flags.flags)
 
     end = time.time()-start
     cpuEnd = time.process_time()-cpu

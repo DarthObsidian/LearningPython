@@ -2,7 +2,7 @@ import urllib.request as ur
 import flags
 import os
 import time
-import threading
+import concurrent.futures
 
 #email
 import smtplib
@@ -10,11 +10,11 @@ from email.mime.image import MIMEImage
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-def getGifs():
+def getGifs(flags):
     if not os.path.exists('flags'):
         os.makedirs('flags')
     url = 'https://www.cia.gov/library/publications/resources/the-world-factbook/graphics/flags/large/'
-    for item in flags.flags:
+    for item in flags:
         name = item + '-lgflag.gif'
         ur.urlretrieve(url + name, 'flags/' + name)
     ur.urlcleanup()
@@ -24,14 +24,8 @@ def main():
     start = time.time()
     cpu = time.process_time()
 
-    threads = []
-    for n in range(4):
-        thread = threading.Thread(target=getGifs)
-        threads.append(thread)
-        thread.start()
-
-    for thread in threads:
-        thread.join()
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        executor.submit(getGifs, flags.flags)
 
     end = time.time()-start
     cpuEnd = time.process_time()-cpu
